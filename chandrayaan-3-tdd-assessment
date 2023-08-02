@@ -1,0 +1,44 @@
+class Spacecraft:
+    DIRECTIONS = {
+        'N': (0, 1, 0),
+        'S': (0, -1, 0),
+        'E': (1, 0, 0),
+        'W': (-1, 0, 0),
+        'U': (0, 0, 1),
+        'D': (0, 0, -1),
+    }
+
+    ROTATIONS = {
+        'N': {'l': 'W', 'r': 'E'},
+        'S': {'l': 'E', 'r': 'W'},
+        'E': {'l': 'N', 'r': 'S'},
+        'W': {'l': 'S', 'r': 'N'},
+    }
+
+    def __init__(self, x, y, z, direction):
+        self.position = [x, y, z]
+        self.direction = direction
+
+    def execute_commands(self, commands):
+        for command in commands:
+            if command in 'lr':
+                self.direction = self.ROTATIONS.get(self.direction, {}).get(command, self.direction)
+            elif command in 'ud':
+                self.direction = command.upper()
+            elif command in 'fb':
+                self.position = [pos + (1 if command == 'f' else -1) * dir for pos, dir in zip(self.position, self.DIRECTIONS[self.direction])]
+        return tuple(self.position), self.direction
+
+def main():
+    x = int(input("Enter starting x coordinate: "))
+    y = int(input("Enter starting y coordinate: "))
+    z = int(input("Enter starting z coordinate: "))
+    direction = input("Enter starting direction (N/S/E/W/U/D): ")
+    craft = Spacecraft(x, y, z, direction)
+    commands = list(input("Enter commands (f/b/l/r/u/d): "))
+    final_position, final_direction = craft.execute_commands(commands)
+    print(f"Final position: {final_position}")
+    print(f"Final direction: {final_direction}")
+
+if __name__ == "__main__":
+    main()
